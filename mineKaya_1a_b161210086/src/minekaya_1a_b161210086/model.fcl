@@ -1,0 +1,95 @@
+FUNCTION_BLOCK model
+VAR_INPUT //INPUT TANIMLAMASI
+  degree: REAL;
+  caprice : REAL;
+  topic : REAL;
+  lmt : REAL;
+  lpss : REAL;
+END_VAR
+
+VAR_OUTPUT //OUTPUT TANIMLAMASI
+  pro_blogger : REAL;
+END_VAR
+
+
+//bulanıklastirma
+
+ FUZZIFY degree
+  TERM low := (0,0)(1,1)(2,0);  //ucgen
+  TERM medium := (1,0)(2,1)(3,0); 
+  TERM high := (2,0)(3,1);
+ END_FUZZIFY
+
+ FUZZIFY caprice
+  TERM right := (0,0)(1,1)(2,0); //ucgen
+  TERM middle := (1,0)(2,1)(3,0); 
+  TERM left := (2,0)(3,1);
+ END_FUZZIFY
+
+ FUZZIFY topic
+  TERM scientific := (0,0)(1,1)(2,0);
+  TERM tourism := (1,0)(2,1)(3,0);
+  TERM impression := (2,0)(3,1)(4,0);
+  TERM news := (3,0)(4,1)(5,0); //ucgen
+  TERM political := (4,0)(5,1); 
+ END_FUZZIFY
+
+ FUZZIFY lmt
+  TERM no := (0,0)(1,1)(2,0);
+  TERM yes := (1,0)(2,1);  //ucgen
+ END_FUZZIFY
+
+ FUZZIFY lpss
+  TERM no := (0,0)(1,1)(2,0);
+  TERM yes := (1,0)(2,1); 
+ END_FUZZIFY
+
+//durulama
+
+DEFUZZIFY pro_blogger
+  TERM nonprof := (0,0)(1,1)(2,0);
+  TERM prof := (1,0)(2,1);
+  METHOD : COG;
+ 
+END_DEFUZZIFY
+
+RULEBLOCK kuralBlock1
+ AND : MIN;
+ ACT : MIN; 
+ ACCU : MAX;
+
+ RULE 1 : IF topic IS scientific THEN pro_blogger IS nonprof;
+ RULE 2 : IF caprice IS left THEN pro_blogger IS prof;
+ RULE 3 : IF topic IS political THEN pro_blogger IS prof;
+ RULE 4 : IF degree IS medium AND caprice IS middle THEN pro_blogger IS prof;
+ RULE 5 : IF degree IS high AND caprice IS middle THEN pro_blogger IS prof;
+ RULE 6 : IF degree IS medium AND topic IS impression THEN pro_blogger IS prof;
+ RULE 7 : IF degree IS medium AND topic IS tourism THEN pro_blogger IS prof;
+ RULE 8 : IF degree IS medium AND topic IS news THEN pro_blogger IS prof;
+ RULE 9 : IF degree IS medium AND lmt IS yes THEN pro_blogger IS prof;
+ RULE 10 : IF degree IS medium AND lpss IS yes THEN pro_blogger IS prof;
+ RULE 11 : IF degree IS high AND topic IS impression THEN pro_blogger IS prof;
+ RULE 12 : IF degree IS high AND topic IS tourism THEN pro_blogger IS prof;
+ RULE 13 : IF degree IS high AND topic IS news THEN pro_blogger IS prof;
+ RULE 14 : IF degree IS high AND lmt IS yes THEN pro_blogger IS prof;
+ RULE 15 : IF degree IS high AND lpss IS yes THEN pro_blogger IS prof;
+ RULE 16 : IF caprice IS middle AND topic IS impression THEN pro_blogger IS prof;
+ RULE 17 : IF caprice IS middle AND topic IS tourism THEN pro_blogger IS prof;
+ RULE 18 : IF caprice IS middle AND topic IS news THEN pro_blogger IS prof;
+ RULE 19 : IF topic IS impression AND lmt IS yes THEN pro_blogger IS prof;
+ RULE 20 : IF topic IS impression AND lpss IS yes THEN pro_blogger IS prof;
+ RULE 21 : IF topic IS tourism AND lmt IS yes THEN pro_blogger IS prof;
+ RULE 22 : IF topic IS tourism AND lpss IS yes THEN pro_blogger IS prof;
+ RULE 23 : IF topic IS news AND lmt IS yes THEN pro_blogger IS prof;
+ RULE 24 : IF topic IS news AND lpss IS yes THEN pro_blogger IS prof;
+ RULE 25 : IF lmt IS yes AND lpss IS yes THEN pro_blogger IS prof;
+ RULE 26 : IF degree IS low AND topic IS scientific Then pro_blogger IS nonprof;
+ RULE 27 : IF degree IS high AND caprice IS right AND topic IS political AND lmt IS yes AND lpss IS no  Then pro_blogger IS nonprof;
+ RULE 28 : IF degree IS high AND caprice IS left AND topic IS political AND lmt IS yes AND lpss IS yes  Then pro_blogger IS nonprof;
+ RULE 29 : IF degree IS medium AND caprice IS right AND topic IS news AND lmt IS yes AND lpss IS yes  Then pro_blogger IS nonprof;
+ RULE 30 : IF degree IS low AND caprice IS right AND topic IS impression AND lmt IS yes AND lpss IS no  Then pro_blogger IS nonprof;
+ 
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
